@@ -2,9 +2,11 @@ package br.com.desafio.cadastroprocessos.controller;
 
 import br.com.desafio.cadastroprocessos.model.Processo;
 import br.com.desafio.cadastroprocessos.service.ProcessoService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/processos")
 @AllArgsConstructor
+@Validated
 public class ProcessoController {
 
     private final ProcessoService processoService;
@@ -31,13 +34,13 @@ public class ProcessoController {
     }
 
     @PostMapping
-    public ResponseEntity<Processo> createProcesso(@RequestBody Processo processo) {
+    public ResponseEntity<Processo> createProcesso(@Valid @RequestBody Processo processo) {
         Processo newProcesso = processoService.save(processo);
         return new ResponseEntity<>(newProcesso, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Processo> updateProcesso(@PathVariable Long id, @RequestBody Processo processoDetails) {
+    public ResponseEntity<Processo> updateProcesso(@PathVariable Long id, @Valid @RequestBody Processo processoDetails) {
         Optional<Processo> processo = processoService.findById(id);
         if (processo.isPresent()) {
             Processo existingProcesso = processo.get();
