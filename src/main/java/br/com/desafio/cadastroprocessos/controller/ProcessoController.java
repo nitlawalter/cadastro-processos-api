@@ -72,4 +72,11 @@ public class ProcessoController {
         return new ResponseEntity<>(ProcessoResponseDTO.fromListPaginated(processos), HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}/visualizacao")
+    public ResponseEntity<Processo> updateDataVisualizacao(@PathVariable Long id) {
+        Optional<Processo> processo = processoService.updateDataVisualizacao(id);
+        return processo.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
 }
