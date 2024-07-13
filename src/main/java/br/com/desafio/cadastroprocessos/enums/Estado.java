@@ -72,4 +72,8 @@ public enum Estado {
     public static Estado getBySigla(String sigla) {
         return BY_SIGLA.get(sigla.toUpperCase());
     }
+
+    public String getSigla() {
+        return sigla;
+    }
 }
