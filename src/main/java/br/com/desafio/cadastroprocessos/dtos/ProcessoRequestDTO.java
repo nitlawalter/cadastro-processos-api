@@ -22,4 +22,13 @@ public class ProcessoRequestDTO {
                 .documento(processo.getDocumento())
                 .build();
     }
+
+    public static Processo to(Processo processo) {
+        return Processo.builder()
+                .npu(processo.getNpu())
+                .municipio(processo.getMunicipio())
+                .uf(processo.getUf())
+                .documento(processo.getDocumento())
+                .build();
+    }
 }

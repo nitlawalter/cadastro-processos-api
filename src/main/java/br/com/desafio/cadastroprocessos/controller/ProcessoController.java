@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,23 +40,27 @@ public class ProcessoController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping
-    public ResponseEntity<ProcessoResponseDTO> createProcesso(@Valid @RequestBody ProcessoRequestDTO processo) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<ProcessoResponseDTO> createProcesso(
+            @RequestParam("processoJson") String processoJson, @RequestParam("file") MultipartFile file) throws IOException {
+        Processo processo = processoService.convertJsonToProcesso(processoJson);
+        if (file != null && !file.isEmpty()) {
+            processo.setDocumento(file.getBytes());
+        }
         Processo newProcesso = processoService.save(ProcessoRequestDTO.to(processo));
         return new ResponseEntity<>(ProcessoResponseDTO.from(newProcesso), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProcessoResponseDTO> updateProcesso(@PathVariable Long id, @Valid @RequestBody ProcessoRequestDTO processoDetails) {
+    public ResponseEntity<ProcessoResponseDTO> updateProcesso(
+            @PathVariable Long id, @RequestParam("processoJson") String processoJson, @RequestParam("file") MultipartFile file) throws IOException {
         Optional<Processo> processo = processoService.findById(id);
         if (processo.isPresent()) {
-            Processo existingProcesso = processo.get();
-            existingProcesso.setNpu(processoDetails.getNpu());
-            existingProcesso.setMunicipio(processoDetails.getMunicipio());
-            existingProcesso.setUf(processoDetails.getUf());
-            existingProcesso.setDocumento(processoDetails.getDocumento());
-            existingProcesso.setDataCadastro(existingProcesso.getDataCadastro());
-            Processo updatedProcesso = processoService.save(existingProcesso);
+            Processo processoEdit = processoService.convertJsonToProcesso(processoJson);
+            if (file != null && !file.isEmpty()) {
+                processoEdit.setDocumento(file.getBytes());
+            }
+            Processo updatedProcesso = processoService.save(processoEdit);
             return new ResponseEntity<>(ProcessoResponseDTO.from(updatedProcesso), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

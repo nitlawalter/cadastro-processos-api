@@ -2,12 +2,14 @@ package br.com.desafio.cadastroprocessos.service;
 
 import br.com.desafio.cadastroprocessos.model.Processo;
 import br.com.desafio.cadastroprocessos.repository.ProcessoRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +19,7 @@ import java.util.Optional;
 public class ProcessoService {
 
     private final ProcessoRepository processoRepository;
-
+    private final ObjectMapper objectMapper;
 
     public List<Processo> findAll() {
         return processoRepository.findAll();
@@ -48,6 +50,10 @@ public class ProcessoService {
             processoRepository.save(existingProcesso);
         }
         return processo;
+    }
+
+    public Processo convertJsonToProcesso(String processoJson) throws IOException {
+        return objectMapper.readValue(processoJson, Processo.class);
     }
 
 }

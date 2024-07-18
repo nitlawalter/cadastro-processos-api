@@ -20,7 +20,6 @@ public class Processo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //@Pattern(regexp = "\\\\d{7}-\\\\d{2}\\\\.\\\\d{4}\\\\.\\\\d\\\\.\\\\d{2}\\\\.\\\\d{4}", message = "NPU must be in the format 1111111-11.1111.1.11.1111")
     @Column(nullable = false)
     private String npu;
 
