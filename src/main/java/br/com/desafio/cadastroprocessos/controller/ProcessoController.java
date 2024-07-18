@@ -19,6 +19,7 @@ import java.util.Optional;
 @RequestMapping("/api/v1/processos")
 @AllArgsConstructor
 @Validated
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProcessoController {
 
     private final ProcessoService processoService;
@@ -52,6 +53,7 @@ public class ProcessoController {
             existingProcesso.setMunicipio(processoDetails.getMunicipio());
             existingProcesso.setUf(processoDetails.getUf());
             existingProcesso.setDocumento(processoDetails.getDocumento());
+            existingProcesso.setDataCadastro(existingProcesso.getDataCadastro());
             Processo updatedProcesso = processoService.save(existingProcesso);
             return new ResponseEntity<>(ProcessoResponseDTO.from(updatedProcesso), HttpStatus.OK);
         } else {

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 @Getter
@@ -19,7 +20,7 @@ public class Processo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Pattern(regexp = "^[0-9]{7}-[0-9]{2}\\.[0-9]{4}\\.1\\.[0-9]{2}\\.[0-9]{4}$", message = "NPU must be in the format 1111111-11.1111.1.11.1111")
+    //@Pattern(regexp = "\\\\d{7}-\\\\d{2}\\\\.\\\\d{4}\\\\.\\\\d\\\\.\\\\d{2}\\\\.\\\\d{4}", message = "NPU must be in the format 1111111-11.1111.1.11.1111")
     @Column(nullable = false)
     private String npu;
 
@@ -37,5 +38,21 @@ public class Processo {
     @Lob
     @Column(nullable = false)
     private byte[] documento;
+
+    @PrePersist
+    protected void onCreate() {
+        this.dataCadastro = LocalDate.now();
+        if (this.documento == null) {
+            this.documento = "Documento Placeholder".getBytes(StandardCharsets.UTF_8);
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.dataVisualizacao = LocalDate.now();
+        if (this.documento == null) {
+            this.documento = "Documento Placeholder".getBytes(StandardCharsets.UTF_8);
+        }
+    }
 
 }
