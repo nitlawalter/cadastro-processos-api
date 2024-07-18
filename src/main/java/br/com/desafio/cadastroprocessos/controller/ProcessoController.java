@@ -7,6 +7,7 @@ import br.com.desafio.cadastroprocessos.service.ProcessoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -85,6 +86,20 @@ public class ProcessoController {
         Optional<Processo> processo = processoService.updateDataVisualizacao(id);
         return processo.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<byte[]> downloadDocumento(@PathVariable Long id) {
+        Optional<Processo> processo = processoService.findById(id);
+        if (processo.isEmpty() || processo.get().getDocumento() == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=documento.pdf");
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+
+        return new ResponseEntity<>(processo.get().getDocumento(), headers, HttpStatus.OK);
     }
 
 }
